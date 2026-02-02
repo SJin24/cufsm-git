@@ -80,7 +80,7 @@ S.btnPlotOptions = uicontrol('Parent',fig,...
           'Units','normalized',...
           'Position',[0.98-0.03 0.96-0.025 0.03 0.025],...  
           'String','...',...
-          'TooltipString','plot options',...
+          'TooltipString','Plot options (node numbers, axes, etc.)',...
           'FontName','Helvetica','FontSize',10,...
           'Callback',@(src,evt) togglePlotOptions(fig));
 
@@ -188,26 +188,36 @@ S.paramEdits = struct();
 %---------------------- bottom buttons ------------------------------
 btnY = 0.02;
 btnH = 0.05;
-gap  = 0.05;
-btnW = (1 - 2*gap - 2*gap)/3;   % left gap, two internal gaps, right gap
+gap  = 0.04;                 % slightly smaller gap to fit 4 nicely
+btnW = (1 - 2*gap - 3*gap)/4;  % left gap + 3 internal gaps + right gap
 
 x1 = gap;
-x2 = gap + btnW + gap;
-x3 = gap + 2*(btnW + gap);
+x2 = x1 + btnW + gap;
+x3 = x2 + btnW + gap;
+x4 = x3 + btnW + gap;
 
 S.btnUpdate = uicontrol('Parent',S.leftPanel,'Style','pushbutton',...
           'Units','normalized','Position',[x1 btnY btnW btnH],...
-          'String','Update preview',...
+          'String','Preview',...
+          'TooltipString','Update the preview screen for the section',...
           'Callback',@(src,evt) onUpdatePreview(fig));
 
 S.btnSave = uicontrol('Parent',S.leftPanel,'Style','pushbutton',...
           'Units','normalized','Position',[x2 btnY btnW btnH],...
           'String','Save...',...
+          'TooltipString','Save the section for later loading and analysis in CUFSM',...
           'Callback',@(src,evt) onSaveModel(fig));
 
-S.btnAccept = uicontrol('Parent',S.leftPanel,'Style','pushbutton',...
+S.btnSubmit = uicontrol('Parent',S.leftPanel,'Style','pushbutton',...
           'Units','normalized','Position',[x3 btnY btnW btnH],...
+          'String','Submit',...
+          'TooltipString','Submit the section to the pre-processor for further analysis',...
+          'Callback',@(src,evt) onSubmitToInput(fig));
+
+S.btnAccept = uicontrol('Parent',S.leftPanel,'Style','pushbutton',...
+          'Units','normalized','Position',[x4 btnY btnW btnH],...
           'String','Close',...
+          'TooltipString','Close window and return to CUFSM main screens',...
           'Callback',@(src,evt) onClose(fig));
 
 % save state
@@ -831,4 +841,77 @@ if isstruct(S) && isfield(S,name) && ~isempty(S.(name))
 else
     v = defaultVal;
 end
+end
+
+%====================================================================
+function onSubmitToInput(fig)
+S = guidata(fig);
+
+% Build / refresh the model so we're guaranteed to have current values
+try
+    P = collectParams(fig);
+    model = template_build_model(S.templateID, P);
+
+    % keep GUI state consistent too (optional but nice)
+    S.model       = model;
+    S.node        = model.node;
+    S.elem        = model.elem;
+    S.prop        = getfield_default(model,'prop',[]);
+    S.lengths     = getfield_default(model,'lengths',[]);
+    S.springs     = getfield_default(model,'springs',0);
+    S.constraints = getfield_default(model,'constraints',0);
+    guidata(fig,S);
+
+catch ME
+    errordlg(ME.message,'Submit failed');
+    return;
+end
+
+%debugging lengths
+%disp(size(S.lengths));
+%disp(S.lengths(1:min(end,5)));
+
+% --- Old-school handoff to CUFSM globals ---
+global prop node elem lengths springs constraints BC m_all
+prop        = getfield_default(model,'prop',[]);
+node        = getfield_default(model,'node',[]);
+elem        = getfield_default(model,'elem',[]);
+lengths     = getfield_default(model,'lengths',[]);
+springs     = getfield_default(model,'springs',0);
+constraints = getfield_default(model,'constraints',0);
+BC='S-S';
+for i=1:length(lengths)
+    m_all{i}=[1];
+end
+%also pass in same as boundcond uses 
+global Hlengths Hm_all HBC Plengths Pm_all PBC solutiontype
+solutiontype==1
+Hlengths=lengths;
+Hm_all=m_all;
+HBC=BC;
+
+
+% Close this window and return to CUFSM preprocessor
+try
+    % Close template GUI (modal-safe)
+    if isvalid(fig)
+        uiresume(fig);
+        delete(fig);
+    end
+catch
+    % if it was already closing, just continue
+end
+
+% Bring CUFSM back + open preprocessor
+try
+    % If you passed mainHandles with a figure handle, prefer it
+    if isfield(S,'mainHandles') && ~isempty(S.mainHandles) && isstruct(S.mainHandles) ...
+            && isfield(S.mainHandles,'fig') && isgraphics(S.mainHandles.fig)
+        figure(S.mainHandles.fig);
+    end
+catch
+end
+
+drawnow;
+pre2;   % old CUFSM preprocessor entry point
 end

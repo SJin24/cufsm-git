@@ -100,8 +100,11 @@ else
         %one model, etc., for now the code will bomb if more than a single
         %section is used - due to inability to calculate section properties.
         %2015 decided to treat the secton as a fully composite section and
+        %note that in the code.
 end
 
+%write out section status
+%section
 
 % if the section is close re-order the element 
 if strcmp(section,'close')

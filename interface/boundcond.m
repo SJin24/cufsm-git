@@ -70,7 +70,7 @@ if ~isempty(Hlengths)&~isempty(Hm_all)&~isempty(HBC)&~isempty(Plengths)&~isempty
         if exist('solutiontype')<1
             solutiontype=isolutiontype;
         end
-        if ~isempty(neigs)
+        if isempty(neigs)
             neigs=20;
         end
     end

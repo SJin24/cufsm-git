@@ -7,7 +7,22 @@ function templateID = template_picker(iconDir)
 %   templateID = '' if the user closes or presses Cancel.
 
     if nargin < 1 || isempty(iconDir)
-        iconDir = fileparts(mfilename('fullpath'));
+        % Try to find template_icons on the MATLAB path
+        iconDir = '';
+    
+        p = strsplit(path, pathsep);
+        for k = 1:numel(p)
+            cand = fullfile(p{k}, 'template_icons');
+            if exist(cand, 'dir')
+                iconDir = cand;
+                break;
+            end
+        end
+    
+        % Fallback: same folder as this file
+        if isempty(iconDir)
+            iconDir = fullfile(fileparts(mfilename('fullpath')), 'template_icons');
+        end
     end
 
     % ---------------------------------------------------------------------

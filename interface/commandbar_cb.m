@@ -691,7 +691,7 @@ end
 
 %-------------------------------------------------
 case 21
-%code for the template called from the main menu
+%code for the CLASSIC template called from the main menu
 %call pre-processor
 commandbar_cb(8);
 %call template
@@ -710,6 +710,7 @@ case 23
 loading;
 %-----------------------------------------------
 
+%-----------------------------------------------
 case 24        
 %-----catches potential change in applied stresses when leaving applied
 %stress generator..
@@ -732,7 +733,7 @@ case 24
             end
         end
     end
-%------
+%----------------------------------------------
 
 %-------------------------------------------------
 case 25
@@ -745,6 +746,15 @@ case 26
 %call hole helper analysis tool
 holehelper;
 %----------------------------------------------
+
+%-------------------------------------------------
+case 27
+%code for the GENERAL template called from the main menu
+%call pre-processor
+commandbar_cb(8);
+%call template
+template_picker();
+%-----------------------------------------------
 
 
 %-------------------------------------------------

@@ -41,6 +41,8 @@ if ~isdeployed  %is deployed check added due to compiler not allowing addpath
 	%addpath([currentlocation filesep 'holehelper']);
 	addpath([currentlocation filesep 'helpers']);
 	addpath([currentlocation filesep 'interface']);
+	addpath([currentlocation filesep 'interface' filesep 'template']);
+	addpath([currentlocation filesep 'interface' filesep 'template' filesep 'template_icons']);
 	addpath([currentlocation filesep 'plotters']);
 	addpath([currentlocation filesep 'icons']);
 	addpath([currentlocation filesep 'cutwp']);
@@ -50,7 +52,7 @@ end
 %%-----------------------------------------------------------------------------------
 %Title and menus
 %-----------------------------------------------------------------------------------
-version=['5.68'];
+version=['5.70'];
 name=['CUFSM v',version,' -- Constrained and Unconstrained Finite Strip Method (CUFSM) Buckling Analysis of Thin-Walled Members'];
 fig=figure('Name',name,...
    	'NumberTitle','off');

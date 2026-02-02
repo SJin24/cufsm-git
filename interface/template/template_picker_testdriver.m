@@ -3,6 +3,7 @@
 
 %fire up template picker
 choice=template_picker('./template_icons');
+choice=template_picker(); %don't try to point to icons use full path
 if isempty(choice)
     return;    % user cancelled
 end
