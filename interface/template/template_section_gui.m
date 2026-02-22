@@ -883,13 +883,15 @@ BC='S-S';
 for i=1:length(lengths)
     m_all{i}=[1];
 end
-%also pass in same as boundcond uses 
+%also pass in same as boundcond uses so that page loads properly 
 global Hlengths Hm_all HBC Plengths Pm_all PBC solutiontype
-solutiontype==1
+solutiontype=1;
 Hlengths=lengths;
 Hm_all=m_all;
 HBC=BC;
-
+Plengths=lengths;
+Pm_all=m_all;
+PBC=BC;
 
 % Close this window and return to CUFSM preprocessor
 try
