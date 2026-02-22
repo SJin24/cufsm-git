@@ -585,7 +585,7 @@ end
 
 %========================================================================
 function lengths=make_lengths(strips,nlen)
-        lenmin=min(strips.l)/2;
+        lenmin=max(max(strips.t*2),min(strips.l)/2);
         lenmax=max(strips.l)*20;
         lengths=logspace(log10(lenmin),log10(lenmax),nlen)';
 end
