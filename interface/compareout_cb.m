@@ -813,7 +813,7 @@ case 40
 %------------------------------------------------------------------------------------------
 %Additional separate window classification plot
 subfig=figure;
-name=['CUFSM v4.0 -- Modal Classification Participation Plot'];
+name=['CUFSM v',version,' -- Modal Classification Participation Plot'];
 set(subfig,'Name',name,'NumberTitle','off');
 set(subfig,'position',[100 100 600 400])%
 %top plot, normal halfwavelength plot
